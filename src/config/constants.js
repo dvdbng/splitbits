@@ -1,5 +1,4 @@
 import { Constants } from 'expo';
-import { Platform } from 'react-native';
 
 const DEV = __DEV__; //eslint-disable-line
 
@@ -7,20 +6,12 @@ export default {
 
   BLOCKCHAIN_EXPLORER_URL: 'https://chain.so/address',
 
-  CONNECTION: {
-    CELLULAR: 'cellular',
-    WIFI: 'wifi',
-  },
-
   CONVERSION: {
     BTC: 0.000001,
     LTC: 0.001,
   },
 
   CRYPTO: {
-    BTC: 'BTC',
-    ETH: 'ETH',
-    LTC: 'LTC',
     XRB: 'XRB',
   },
 
@@ -40,40 +31,12 @@ export default {
     ES: 'Español',
   },
 
-  MIN_CONFIRMATIONS: 3,
-
-  NETWORKS: {
-    BTC: DEV ? 'testnet' : 'bitcoin',
-    LTC: DEV ? 'testnet' : 'litecoin',
-    ETH: DEV ? 'testnet' : 'ethereum',
-  },
-
-  PRICE_PRO: {
-    BTC: 4.99,
-    LTC: 0.99,
-  },
-
-  PRODUCT: {
-    PRO_WALLET: 'pro_wallet',
-  },
-
   SYMBOL: {
     EUR: '€',
     USD: '$',
     GBP: '£',
     JPY: '¥',
-
-    BTC: Platform.OS === 'android' && Platform.Version < 26 ? 'Ƀ' : '₿',
-    ETH: 'Ξ',
-    LTC: 'Ł',
-
-    FRIENDLY: {
-      BTC: 'bits',
-      LTC: 'lites',
-    },
   },
-
-  SATOSHI: 0.00000001,
 
   SERVICE: DEV
     ? Constants.linkingUrl.replace(/^\w+:\/\/([^:/]+):\d+\/.*$/, 'http://$1:3000/')
@@ -110,19 +73,5 @@ export default {
     RECOVER: 'recover',
     REQUEST: 'request',
     SEND: 'send',
-  },
-
-  WALLET: {
-    ADDRESS: {
-      BTC: 0,
-      BTC_SEGWIT: 169,
-      BTC_TESTNET: 111,
-      LTC: 48,
-    },
-    WIF: {
-      BTC: 128,
-      BTC_TESTNET: 239,
-      LTC: 176,
-    },
   },
 };

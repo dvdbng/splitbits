@@ -10,7 +10,7 @@ import { addWalletAction } from '../store/actions';
 import { validateAddress } from './modules';
 import styles from './ModalWalletNew.style';
 
-const { CRYPTO: { BTC }, DEV } = C;
+const { DEV } = C;
 const CRYPTOS = {
   BTC: 'Bitcoin',
   // ETH: 'Ethereum', @TODO: Disabled meanwhile we don't have a full node
