@@ -18,7 +18,6 @@ import { Error } from './src/containers';
 const navigationOptions = { header: null };
 
 const screens = {
-  Lock: { screen: LockScreen, navigationOptions },
   Onboarding: { screen: OnboardingScreen, navigationOptions },
   Main: { screen: MainScreen, navigationOptions },
   Transaction: { screen: TransactionScreen, navigationOptions },
@@ -26,9 +25,10 @@ const screens = {
   Friends: { screen: FriendsScreen, navigationOptions },
   Settings: { screen: SettingsScreen, navigationOptions },
   Wallets: { screen: WalletsScreen, navigationOptions },
+  Lock: { screen: LockScreen, navigationOptions },
 };
+const NavigationMain = StackNavigator({ ...screens }, { initialRouteName: 'Main' });
 
-const NavigationMain = StackNavigator({ ...screens }, { initialRouteName: 'Lock' });
 const NavigationOnboarding = StackNavigator({ ...screens }, { initialRouteName: 'Onboarding' });
 
 class App extends Component {

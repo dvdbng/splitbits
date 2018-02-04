@@ -23,7 +23,7 @@ export default {
     COPYRIGHT: 'Made by a small band of superheroes in London. Thank you for your support!',
     CREATE: 'create',
     CREATE_BACKUP: 'Create a backup',
-    CREATE_FIRST_WALLET: 'Create your first wallet',
+    CREATE_FIRST_WALLET: 'Create your wallet',
 
     DATE: 'Date',
     DEPOSIT: 'Deposit',
@@ -152,7 +152,7 @@ export default {
     COPYRIGHT: 'Creado por una banda de superheroes desde Londres. Gracias por tu apoyo!',
     CREATE: 'Crear',
     CREATE_BACKUP: 'Crea una copia de seguridad',
-    CREATE_FIRST_WALLET: 'Crea tu primera cartera',
+    CREATE_FIRST_WALLET: 'Crea tu cartera',
 
     DATE: 'Fecha',
     DEPOSIT: 'Deposito',

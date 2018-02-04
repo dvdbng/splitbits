@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 
 import { C, SHAPE, STYLE, TEXT, THEME } from '../../config';
 import { Button } from '../../components';
-import { ModalWalletNew } from '../../containers';
+import { WalletService } from '../../services';
 import { updateDeviceAction } from '../../store/actions';
 import { Slide } from './components';
 import styles from './Onboarding.style';
@@ -21,15 +21,11 @@ const SLIDES = 5;
 class Onboarding extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      index: 0,
-      modal: false,
-    };
+    this.state = { index: 0 };
     this._onNext = this._onNext.bind(this);
     this._onSkip = this._onSkip.bind(this);
     this._onSuccess = this._onSuccess.bind(this);
     this._onSwipe = this._onSwipe.bind(this);
-    this._onWallet = this._onWallet.bind(this);
   }
 
   async componentWillMount() {
@@ -49,10 +45,13 @@ class Onboarding extends Component {
     swipper.scrollBy(SLIDES - index);
   }
 
-  _onSuccess() {
-    const { _onWallet, props: { navigation } } = this;
+  async _onSuccess() {
+    const { props: { addWallet, navigation } } = this;
 
-    _onWallet();
+    const wallet = await WalletService.create({ coin: 'XRB' });
+    if (wallet) {
+      await addWallet(wallet);
+    }
     navigation.navigate('Main');
   }
 
@@ -60,15 +59,11 @@ class Onboarding extends Component {
     this.setState({ index });
   }
 
-  _onWallet() {
-    this.setState({ modal: !this.state.modal });
-  }
-
   render() {
     const {
-      _onNext, _onSwipe, _onSkip, _onWallet, _onSuccess,
+      _onNext, _onSwipe, _onSkip, _onSuccess,
       props: { i18n },
-      state: { index, modal },
+      state: { index },
     } = this;
     const optionDisabled = (index + 1) > SLIDES;
 
@@ -88,7 +83,7 @@ class Onboarding extends Component {
           <Slide backgroundColor={RED} caption={i18n.CAPTION.PRIVACY} image="privacy" hint={i18n.HINT.PRIVACY} />
           <Slide backgroundColor={ACCENT} caption={i18n.CAPTION.EXCHANGE} image="exchange" hint={i18n.HINT.EXCHANGE} />
           <Slide caption={i18n.CAPTION.WALLET} image="wallet" hint={i18n.HINT.WALLET}>
-            <Button accent caption={i18n.CREATE_FIRST_WALLET} onPress={_onWallet} style={styles.button} />
+            <Button accent caption={i18n.CREATE_FIRST_WALLET} onPress={_onSuccess} style={styles.button} />
           </Slide>
         </Swiper>
         <View style={[STYLE.ROW, styles.options]}>
@@ -109,7 +104,6 @@ class Onboarding extends Component {
             style={styles.right}
           />
         </View>
-        <ModalWalletNew visible={modal} onClose={_onWallet} onSuccess={_onSuccess} />
       </View>
     );
   }
@@ -128,6 +122,7 @@ const mapStateToProps = ({ i18n = TEXT.EN }) => ({
 
 const mapDispatchToProps = dispatch => ({
   updateDevice: device => device && dispatch(updateDeviceAction(device)),
+  addWallet: wallet => dispatch(addWalletAction(wallet)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Onboarding);

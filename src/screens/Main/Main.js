@@ -1,18 +1,16 @@
 import { arrayOf, func, shape } from 'prop-types';
 import { LinearGradient, Notifications } from 'expo';
 import React, { Component } from 'react';
-import { AppState, View, Text } from 'react-native';
+import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { C, SHAPE, STYLE, THEME } from '../../config';
-import { ModalMnemonic, ModalTransaction, ModalWallet, ModalWalletNew } from '../../containers';
+import { SHAPE, STYLE, THEME } from '../../config';
+import { ModalMnemonic, ModalTransaction, ModalWallet } from '../../containers';
 import { Header, Footer, TransactionButton, Transactions, Wallets } from './components';
-import { onAppActive, onNotification } from './modules';
-import { ConnectionService, CurrenciesService, DeviceService } from '../../services';
+import { onNotification } from './modules';
+import { CurrenciesService, DeviceService } from '../../services';
 import { updateCurrenciesAction, updateDeviceAction } from '../../store/actions';
-import styles from './Main.style';
 
-const { CONNECTION: { WIFI }, TYPE } = C;
 const { COLOR } = THEME;
 
 class Main extends Component {
@@ -20,8 +18,6 @@ class Main extends Component {
     super(props);
     this.state = {
       connection: undefined,
-      context: undefined,
-      hexSeed: undefined,
       showTransaction: false,
       showWalletNew: false,
       showWallet: false,
@@ -35,26 +31,15 @@ class Main extends Component {
     this._onRecover = this._onRecover.bind(this);
     this._onSwipe = this._onSwipe.bind(this);
     this._onWallet = this._onWallet.bind(this);
-    this._setConnection = this._setConnection.bind(this);
   }
 
   async componentWillMount() {
-    const { _setConnection, props: { updateCurrencies, updateDevice } } = this;
+    const { props: { updateCurrencies, updateDevice } } = this;
     Promise.all([
       CurrenciesService.list().then(updateCurrencies),
       DeviceService.state().then(updateDevice),
     ]);
-    AppState.addEventListener('change', async(state) => {
-      _setConnection();
-      onAppActive(this.props, state);
-    });
-    _setConnection();
-    ConnectionService.listen(_setConnection);
     Notifications.addListener(onNotification);
-  }
-
-  async _setConnection(connection) {
-    this.setState({ connection: connection || await ConnectionService.get() });
   }
 
   _onNewTransaction(type) {
@@ -71,22 +56,8 @@ class Main extends Component {
     this.setState({ showTransaction: !this.state.showTransaction });
   }
 
-  _onModalWallet(context) {
-    const nextState = { context, hexSeed: undefined };
-    if (context !== TYPE.RECOVER) {
-      nextState.showWalletNew = !this.state.showWalletNew;
-    } else {
-      nextState.showMnemonic = !this.state.showMnemonic;
-    }
-    this.setState(nextState);
-  }
-
   _onMnemonic() {
-    this.setState({ showMnemonic: !this.state.showMnemonic, hexSeed: undefined });
-  }
-
-  _onRecover(hexSeed) {
-    this.setState({ showMnemonic: false, showWalletNew: true, hexSeed });
+    this.setState({ showMnemonic: !this.state.showMnemonic });
   }
 
   _onSwipe(walletIndex) {
@@ -102,7 +73,7 @@ class Main extends Component {
       _onNewTransaction, _onMnemonic, _onModal, _onModalWallet, _onRecover, _onSwipe, _onWallet,
       props: { i18n, navigation: { navigate }, wallets },
       state: {
-        connection, context, hexSeed, showMnemonic, showTransaction, showWalletNew, showWallet, walletIndex,
+        connection, showMnemonic, showTransaction, showWalletNew, showWallet, walletIndex,
       },
     } = this;
     const wallet = wallets[walletIndex];
@@ -115,19 +86,11 @@ class Main extends Component {
         <LinearGradient colors={COLOR.GRADIENT} style={STYLE.LAYOUT_TOP} >
           <Header />
           <Wallets index={walletIndex} onNew={_onModalWallet} onOptions={_onWallet} onSwipe={_onSwipe} />
-          { connection === WIFI && <Text style={styles.warning}>{i18n.UNSECURED_CONNECTION}</Text> }
         </LinearGradient>
         <Transactions navigate={navigate} wallet={wallet} />
         <Footer navigate={navigate} elevation={focus} />
         <TransactionButton onPress={_onModal} visible={focus && wallet !== undefined && !isOffline} />
         <ModalTransaction visible={showTransaction} onClose={_onModal} onPress={_onNewTransaction} wallet={wallet} />
-        <ModalWalletNew
-          visible={showWalletNew}
-          camera={context === TYPE.IMPORT}
-          hexSeed={hexSeed}
-          onClose={_onModalWallet}
-          onSuccess={_onModalWallet}
-        />
         { wallet &&
           <ModalWallet visible={showWallet && !showMnemonic} wallet={wallet} onBackup={_onMnemonic} onClose={_onWallet} /> }
         <ModalMnemonic visible={showMnemonic} onClose={_onMnemonic} onRecover={_onRecover} wallet={wallet} />

@@ -21,6 +21,7 @@ export default {
     BTC: 'BTC',
     ETH: 'ETH',
     LTC: 'LTC',
+    XRB: 'XRB',
   },
 
   DEV,
