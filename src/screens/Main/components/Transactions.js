@@ -1,18 +1,16 @@
 import { arrayOf, func, shape } from 'prop-types';
 import React, { Component } from 'react';
 import { FlatList, RefreshControl, View } from 'react-native';
-import { View as Motion } from 'react-native-animatable';
 import { connect } from 'react-redux';
 
-import { C, SHAPE, STYLE, THEME } from '../../../config';
-import { TransactionService, WalletService } from '../../../services';
-import { updateTransactionsAction, updateWalletAction } from '../../../store/actions';
+import { SHAPE, STYLE, THEME } from '../../../config';
+import { TransactionService } from '../../../services';
+import { updateTransactionsAction } from '../../../store/actions';
 import { walletTransactions } from '../modules';
 import TransactionItem from './TransactionItem';
 import styles from './Transactions.style';
 
-const { STATE: { ARCHIVED, REQUESTED } } = C;
-const { TRANSACTION, WALLET } = SHAPE;
+const { TRANSACTION, DEVICE } = SHAPE;
 const { ANIMATION: { DURATION } } = THEME;
 let timeout;
 
@@ -28,25 +26,18 @@ class Transactions extends Component {
     this._onRefresh();
   }
 
-  componentWillReceiveProps({ wallet }) {
-    const { wallet: { id } = {} } = this.props;
-    if (wallet !== undefined && wallet.id !== id) this._onRefresh(wallet);
-  }
-
-  async _onRefresh(wallet = this.props.wallet) {
-    const { props: { transactions = [], updateTransactions, updateWallet } } = this;
-    const { blockHeight: lastBlock } = transactions[0] || {};
+  async _onRefresh() {
+    const { props: { device, updateTransactions } } = this;
 
     timeout = setTimeout(() => this.setState({ refreshing: true }), DURATION / 2);
-    WalletService.state({ id: wallet.id }).then(updateWallet);
-    await TransactionService.list({ walletId: wallet.id, lastBlock }).then(updateTransactions);
+    await TransactionService.list({ deviceId: device.id }).then(updateTransactions);
     clearTimeout(timeout);
     this.setState({ refreshing: false });
   }
 
   _renderTransaction({ item }) {
-    const { navigate, wallet } = this.props;
-    return <TransactionItem data={item} onPress={() => navigate('Transaction', { item, wallet })} wallet={wallet} />;
+    const { navigate } = this.props;
+    return <TransactionItem data={item} onPress={() => navigate('Transaction', { item })} />;
   }
 
   render() {
@@ -58,15 +49,13 @@ class Transactions extends Component {
 
     return (
       <View style={[STYLE.LAYOUT_BOTTOM, styles.container]}>
-        <Motion animation="bounceInUp" delay={DURATION / 2} duration={DURATION}>
-          <FlatList
-            data={transactions}
-            keyExtractor={item => item.id}
-            refreshControl={<RefreshControl onRefresh={_onRefresh} refreshing={refreshing} />}
-            renderItem={_renderTransaction}
-            style={styles.list}
-          />
-        </Motion>
+        <FlatList
+          data={transactions}
+          keyExtractor={item => item.id}
+          refreshControl={<RefreshControl onRefresh={_onRefresh} refreshing={refreshing} />}
+          renderItem={_renderTransaction}
+          style={styles.list}
+        />
       </View>
     );
   }
@@ -76,14 +65,14 @@ Transactions.propTypes = {
   navigate: func,
   transactions: arrayOf(shape(TRANSACTION)),
   updateTransactions: func,
-  wallet: shape(WALLET),
+  device: shape(DEVICE),
 };
 
 Transactions.defaultProps = {
   navigate() {},
   transactions: [],
   updateTransactions() {},
-  wallet: undefined,
+  device: {},
 };
 
 const mapStateToProps = ({ device, transactions }, { wallet }) => ({
@@ -92,7 +81,6 @@ const mapStateToProps = ({ device, transactions }, { wallet }) => ({
 
 const mapDispatchToProps = dispatch => ({
   updateTransactions: transactions => transactions && dispatch(updateTransactionsAction(transactions)),
-  updateWallet: wallet => wallet && dispatch(updateWalletAction(wallet)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Transactions);

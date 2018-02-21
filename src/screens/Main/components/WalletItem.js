@@ -1,11 +1,10 @@
 import { array, func, number, oneOfType, shape } from 'prop-types';
 import React from 'react';
 import { Image, Text, View } from 'react-native';
-import { View as Motion } from 'react-native-animatable';
 import { connect } from 'react-redux';
 
 import { ASSETS, C, SHAPE, STYLE, THEME } from '../../../config';
-import { Amount, Button, Touchable } from '../../../components';
+import { Amount, Button, Touchable, Motion } from '../../../components';
 import { walletTransactions } from '../modules';
 import styles from './WalletItem.style';
 
@@ -37,71 +36,34 @@ const WalletItem = ({
   const styleText = isPRO || readOnly ? styles.textHighlight : styles.text;
 
   return (
-    <Motion
-      animation="bounceIn"
-      delay={300}
-      duration={DURATION}
-      style={[
-        STYLE.ELEVATION,
-        styles.container,
-        !isPRO && !readOnly ? styles.containerDefault : undefined,
-        isPRO ? styles.containerPRO : undefined,
-        (!id || readOnly) ? styles.containerEmpty : undefined,
-        style]}
-    >
-      {
-        id ?
-          <Touchable onPress={onPress} style={styles.container}>
-            <View style={styles.content}>
-              <View style={styles.amounts}>
-                <View style={STYLE.ROW}>
-                  <Amount coin={coin} value={balance} style={[styleText, styles.amount]} />
-                  <View style={styles.tags}>
-                    { isPRO && !readOnly && <View style={styles.tag}><Text style={styles.tagLabel}>PRO</Text></View> }
-                    { readOnly &&
-                      <View style={styles.tag}><Text style={styles.tagLabel}>{i18n.READ_ONLY}</Text></View> }
-                  </View>
-                </View>
-                <Amount
-                  coin={currency}
-                  value={balance / (currencies[coin] / SATOSHI)}
-                  style={[styleText, styles.fiat]}
-                />
-              </View>
-
-              <Text style={[styleText, styles.typeWriter]}>{name.toUpperCase()}</Text>
-              <View style={[STYLE.ROW, styles.address]}>
-                <Text style={[styleText, styles.typeWriter]}>●●●●</Text>
-                <Text style={[styleText, styles.typeWriter]}>●●●●</Text>
-                <Text style={[styleText, styles.typeWriter]}>●●●●</Text>
-                <Text style={[styleText, styles.typeWriter]}>{address.slice(-4).toUpperCase()}</Text>
-              </View>
-              <View style={STYLE.ROW}>
-                <Text style={[styleText, styles.typeWriter, styles.date]}>{MMYY(createdAt)}</Text>
-                <Image source={ASSETS[coin]} style={styles.coinLogo} />
-              </View>
-            </View>
-          </Touchable>
-          :
-          <View style={[STYLE.CENTERED, styles.content]}>
-            <Text style={[styles.bold, styles.highlight]}>{i18n.NEW_WALLET}</Text>
-            <View style={STYLE.ROW}>
-              { NEW_WALLET_OPTIONS.map(key => (
-                <View key={key} style={[STYLE.CENTERED, styles.option]}>
-                  <Button
-                    icon={TYPE[key]}
-                    circle
-                    onPress={() => onPress(TYPE[key])}
-                    raised
-                    style={styles.button}
-                    captionStyle={styles.buttonCaption}
-                  />
-                  <Text style={styles.tagLabel}>{i18n[key]}</Text>
-                </View>)) }
+    <Touchable onPress={onPress} style={styles.container}>
+      <View style={styles.content}>
+        <View style={styles.amounts}>
+          <View style={STYLE.ROW}>
+            <Amount coin={coin} value={balance} style={[styleText, styles.amount]} />
+            <View style={styles.tags}>
+              { isPRO && !readOnly && <View style={styles.tag}><Text style={styles.tagLabel}>PRO</Text></View> }
+              { readOnly &&
+                <View style={styles.tag}><Text style={styles.tagLabel}>{i18n.READ_ONLY}</Text></View> }
             </View>
           </View>
-      }
-    </Motion>
+          <Amount
+            coin={currency}
+            value={balance / (currencies[coin] / SATOSHI)}
+            style={[styleText, styles.fiat]}
+          />
+        </View>
+
+        <Text style={[styleText, styles.typeWriter]}>{name.toUpperCase()}</Text>
+        <View style={[STYLE.ROW, styles.address]}>
+          <Text style={[styleText, styles.typeWriter]}>{address}</Text>
+        </View>
+        <View style={STYLE.ROW}>
+          <Text style={[styleText, styles.typeWriter, styles.date]}>{MMYY(createdAt)}</Text>
+          <Image source={ASSETS[coin]} style={styles.coinLogo} />
+        </View>
+      </View>
+    </Touchable>
   );
 };
 

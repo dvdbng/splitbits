@@ -46,21 +46,3 @@ export const updateTransactionsAction = transactions => ({
   transactions,
 });
 
-// -- Wallet
-export const ADD_WALLET = '@splitbits/ADD_WALLET';
-export const addWalletAction = wallet => ({
-  type: ADD_WALLET,
-  wallet,
-});
-
-export const REMOVE_WALLET = '@splitbits/REMOVE_WALLET';
-export const removeWalletAction = wallet => ({
-  type: REMOVE_WALLET,
-  wallet,
-});
-
-export const UPDATE_WALLET = '@splitbits/UPDATE_WALLET';
-export const updateWalletAction = wallet => ({
-  type: UPDATE_WALLET,
-  wallet,
-});

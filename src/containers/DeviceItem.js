@@ -24,12 +24,12 @@ class DeviceItem extends Component {
 
   _onRelation(method) {
     const { data: { id }, updateDevice } = this.props;
-    DeviceService[method]({ id }, updateDevice);
+    DeviceService[method](id, updateDevice);
   }
 
   async _onRequest() {
     const { data: { id }, onRequest } = this.props;
-    await DeviceService.request({ id });
+    await DeviceService.add(id);
     onRequest();
   }
 
@@ -38,21 +38,21 @@ class DeviceItem extends Component {
       _onRelation, _onRequest,
       props: {
         i18n, onPress, request, selected, style, data,
-        device: { requests },
+        device: { friends },
       },
     } = this;
     const {
       id, image, name, requested,
     } = data;
-    const isRequest = requests.find(item => item.id === id);
+    const isRequest = friends.find(item => item.id === id);
     let options;
 
     if (!request && !onPress) {
       options = (!isRequest)
-        ? [{ ...BUTTON_CANCEL, text: i18n.REMOVE, onPress: () => _onRelation('remove') }]
+        ? [{ ...BUTTON_CANCEL, text: i18n.REMOVE, onPress: () => _onRelation('hide') }]
         : [
-          { ...BUTTON_ACCEPT, text: i18n.ACCEPT, onPress: () => _onRelation('accept') },
-          { ...BUTTON_CANCEL, text: i18n.CANCEL, onPress: () => _onRelation('cancel') },
+          { ...BUTTON_ACCEPT, text: i18n.ACCEPT, onPress: () => _onRelation('add') },
+          { ...BUTTON_CANCEL, text: i18n.CANCEL, onPress: () => _onRelation('hide') },
         ];
     }
 

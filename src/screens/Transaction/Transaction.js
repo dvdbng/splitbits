@@ -1,10 +1,9 @@
 import { func, shape, string } from 'prop-types';
 import React, { Component } from 'react';
-import { View as Motion } from 'react-native-animatable';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { Amount, Button, QRreader } from '../../components';
+import { Amount, QRreader, Motion } from '../../components';
 import { C, SHAPE, STYLE } from '../../config';
 import { ConnectionService, TransactionService } from '../../services';
 import { updateRecipientAction, updateTransactionsAction } from '../../store/actions';
@@ -13,7 +12,7 @@ import { submit } from './modules';
 import styles from './Transaction.style';
 
 const {
-  CONNECTION: { WIFI }, PRODUCT: { PRO_WALLET }, SATOSHI, STATE: { REQUESTED }, TYPE: { SEND, REQUEST },
+  SATOSHI, STATE: { REQUESTED }, TYPE: { SEND, REQUEST },
 } = C;
 let timeout;
 
@@ -104,7 +103,7 @@ class Transaction extends Component {
         currencies, device: { currency }, i18n, item, navigation, type, wallet,
       },
       state: {
-        amount = 0, camera, concept, connection, fees = {}, processing,
+        amount = 0, camera, concept, fees = {}, processing,
       },
     } = this;
     const { coin } = wallet;
@@ -134,14 +133,6 @@ class Transaction extends Component {
                 type={type}
                 wallet={wallet}
               /> }
-            { item.product === PRO_WALLET && item.state === REQUESTED &&
-              <Button
-                caption={i18n.CANCEL_PAYMENT}
-                motion={{ animation: 'bounceInUp', delay: 700 }}
-                onPress={_onCancel}
-                processing={processing}
-                style={styles.buttonCancel}
-              /> }
           </View>
           { fee > 0 &&
             <Motion animation="bounceIn" style={styles.centered}>
@@ -151,10 +142,6 @@ class Transaction extends Component {
                 value={(fee * SATOSHI) / currencies[currency][coin]}
                 style={styles.caption}
               />
-            </Motion> }
-          { editable && connection === WIFI &&
-            <Motion animation="bounceIn" delay={700} style={styles.centered}>
-              <Text style={[styles.caption, styles.error]}>{i18n.UNSECURED_CONNECTION}</Text>
             </Motion> }
         </View>
         <QRreader active={camera} onClose={_onCamera} onRead={_onAddress} />

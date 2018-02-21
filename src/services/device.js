@@ -1,13 +1,34 @@
+import nanoJS from 'nano-lib';
+import { Constants } from 'expo';
+
 import { service } from './modules';
+import { SecureStore } from '../store';
+import EntropyService from './entropy';
+import PushService from './push';
 
-const relationship = async(endpoint, props, action, method = 'POST') => {
-  const response = await service(endpoint, { method, body: JSON.stringify(props) });
-  if (response && action) action(response);
-
-  return response;
-};
+const { deviceId } = Constants;
+const signatureMessage = `This is pico app on behalf of a user. We want to log into this account from device ${deviceId}.`;
 
 export default {
+  async create() {
+    const seed = await EntropyService();
+    const { address, secret } = nanoJS.address.fromSeed(seed, 0);
+    await SecureStore.set(address, seed);
+    const signature = nanoJS.message.sign(signatureMessage, secret).toString('base64');
+
+    const props = {
+      address,
+      deviceId,
+      signature,
+      currency: 'USD',
+      language: 'EN',
+      pushToken: await PushService.getToken(),
+    };
+
+    const resp = await service('user', props);
+    if (resp.accessToken) service.token = resp.accessToken;
+    return resp;
+  },
 
   async update({
     currency, image, language, name, trend,
@@ -32,30 +53,29 @@ export default {
   },
 
   search(query) {
-    return service(`device/search?query=${query}`);
+    if (query.length < 3) {
+      return new Promise(resolve => resolve([]));
+    }
+    return service(`friends/search?q=${query}`);
   },
 
   state() {
-    return service('device/state');
+    return service('me');
   },
 
-  request(props = {}, action) {
-    return relationship('device/request', props, action);
+  add(id) {
+    return service('friends/add', { id });
   },
 
-  qr(props = {}, action) {
-    return relationship('device/qr', props, action);
+  qr(id) {
+    return service('friends/add', { id, qr: true });
   },
 
-  accept(props = {}, action) {
-    return relationship('device/accept', props, action);
+  hide(id) {
+    return service('friends/hide', { id });
   },
 
-  cancel(props = {}, action) {
-    return relationship('device/cancel', props, action);
-  },
-
-  remove(props = {}, action) {
-    return relationship('device/remove', props, action, 'DELETE');
+  remove(id) {
+    return service('device/remove', { id }, 'DELETE');
   },
 };

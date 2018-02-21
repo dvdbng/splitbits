@@ -1,11 +1,11 @@
 import { bool, func, node, string } from 'prop-types';
 import React from 'react';
 import { KeyboardAvoidingView, Modal as ReactNativeModal, Platform, Text, View } from 'react-native';
-import { View as Motion } from 'react-native-animatable';
 
 import { STYLE, THEME } from '../config';
 import Button from './Button';
 import styles from './Modal.style';
+import Motion from './Motion';
 
 const { ANIMATION: { DURATION } } = THEME;
 

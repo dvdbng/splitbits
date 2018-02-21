@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 
 import { C, SHAPE, STYLE, TEXT, THEME } from '../../config';
 import { Button } from '../../components';
-import { WalletService } from '../../services';
+import { WalletService, DeviceService } from '../../services';
 import { updateDeviceAction } from '../../store/actions';
 import { Slide } from './components';
 import styles from './Onboarding.style';
@@ -46,12 +46,8 @@ class Onboarding extends Component {
   }
 
   async _onSuccess() {
-    const { props: { addWallet, navigation } } = this;
-
-    const wallet = await WalletService.create({ coin: 'XRB' });
-    if (wallet) {
-      await addWallet(wallet);
-    }
+    const { props: { updateDevice, navigation } } = this;
+    await updateDevice(await DeviceService.create());
     navigation.navigate('Main');
   }
 
@@ -122,7 +118,6 @@ const mapStateToProps = ({ i18n = TEXT.EN }) => ({
 
 const mapDispatchToProps = dispatch => ({
   updateDevice: device => device && dispatch(updateDeviceAction(device)),
-  addWallet: wallet => dispatch(addWalletAction(wallet)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Onboarding);

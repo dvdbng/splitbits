@@ -8,25 +8,25 @@ const { Constants: { deviceId = 'unknown' } } = Expo || {}; // eslint-disable-li
 const DEFAULT_HEADERS = {
   Accept: 'application/json',
   deviceId,
-  token: deviceId,
-  testnet: DEV,
   timeout: TIMEOUT_SERVICE,
 };
 
-export default async(endpoint, props = {}, multipart) => {
-  const { method = 'GET' } = props;
+const callService = async(endpoint, body, method) => {
   const { dispatch } = instance.get();
   const headers = {
     ...DEFAULT_HEADERS,
-    'Content-Type': multipart ? 'multipart/form-data' : 'application/json',
+    token: callService.token || '',
+    'Content-Type': (body instanceof FormData) ? 'multipart/form-data' : 'application/json',
   };
   const url = `${C.SERVICE}${endpoint}`;
+  body = ((typeof body) === 'object' && !(body instanceof FormData)) ? JSON.stringify(body) : body;
+  method = method || body ? 'POST' : 'GET';
 
   dispatch(errorAction());
   if (DEV) console.log(`[${method}] ${url}`);
 
-  return new Promise((resolve) => {
-    fetch(url, { headers, ...props, method })  // eslint-disable-line
+  return new Promise((resolve, reject) => {
+    fetch(url, { headers, method, body })  // eslint-disable-line
       .then(async(response) => {
         const json = await response.json();
         if (response.status >= 400) {
@@ -35,18 +35,18 @@ export default async(endpoint, props = {}, multipart) => {
           error.message = json.message;
           throw error;
         }
-        return resolve(json);
+        return resolve(json.data);
       }).catch((error = {}) => {
         if (!error.response) error.message = ERROR_CONNECTION; //eslint-disable-line
 
         dispatch(errorAction({
           code: error.response ? error.response.status : undefined,
           endpoint,
-          props,
           message: error.message,
         }));
-
-        return resolve(undefined); // eslint-disable-line
+        return resolve(null);
       });
   });
 };
+
+export default callService;

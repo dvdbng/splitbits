@@ -1,7 +1,7 @@
 import { array, number, shape, oneOfType } from 'prop-types';
 import React from 'react';
 import { Image } from 'react-native';
-import { View as Motion } from 'react-native-animatable';
+import Motion from './Motion';
 
 import styles from './Logo.style';
 import { ASSETS } from '../config';

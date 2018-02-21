@@ -86,12 +86,6 @@ export default {
     TO: 'To',
     TRANSACTION: 'Transaction',
     TRANSFER: 'Transfer',
-    TREND: 'Trend',
-    TRENDS: {
-      daily: 'Daily',
-      weekly: 'Weekly',
-      monthly: 'Monthly',
-    },
     TYPE_OF_TRANSACTION: 'Type of transaction',
     TYPE_OF_WALLET: 'Type of wallet',
 

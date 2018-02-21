@@ -6,7 +6,6 @@ import ModalValues from './ModalValues';
 import ModalMnemonic from './ModalMnemonic';
 import ModalTransaction from './ModalTransaction';
 import ModalWallet from './ModalWallet';
-import ModalWalletNew from './ModalWalletNew';
 import WalletItem from './WalletItem';
 
 export {
@@ -18,6 +17,5 @@ export {
   ModalMnemonic,
   ModalTransaction,
   ModalWallet,
-  ModalWalletNew,
   WalletItem,
 };

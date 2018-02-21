@@ -1,10 +1,9 @@
 import { func } from 'prop-types';
 import React from 'react';
 import { Text, View } from 'react-native';
-import { View as Motion } from 'react-native-animatable';
 
 import { STYLE } from '../../../config';
-import { Icon, Touchable } from '../../../components';
+import { Icon, Touchable, Motion } from '../../../components';
 import styles from './NumKeyboard.style';
 
 const BACKSPACE = 'backspace';

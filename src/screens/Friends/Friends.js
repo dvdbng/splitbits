@@ -54,7 +54,7 @@ class Friends extends Component {
   async _onQRreader(id) {
     this.setState({ scanner: false });
     const { navigation, updateDevice } = this.props;
-    await DeviceService.qr({ id, direct: true });
+    await DeviceService.qr(id);
     await DeviceService.state().then(updateDevice);
     navigation.goBack();
   }
@@ -108,10 +108,10 @@ Friends.defaultProps = {
   selectMode: false,
 };
 
-const mapStateToProps = ({ device: { devices = [] }, i18n }, props) => {
+const mapStateToProps = ({ device: { friends = [] }, i18n }, props) => {
   const { selectMode = false } = props.navigation.state.params || {};
 
-  return { devices, i18n, selectMode };
+  return { devices: friends, i18n, selectMode };
 };
 
 const mapDispatchToProps = dispatch => ({

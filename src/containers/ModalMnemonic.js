@@ -7,10 +7,10 @@ import { connect } from 'react-redux';
 import { Button, Input, Modal } from '../components';
 import { SHAPE, STYLE } from '../config';
 import { MnemonicService } from '../services';
-import { updateWalletAction } from '../store/actions';
+import { updateDeviceAction } from '../store/actions';
 import styles from './ModalMnemonic.style';
 
-const { WALLET } = SHAPE;
+const { DEVICE } = SHAPE;
 const WORDS_LENGTH = 12;
 
 class ModalMnemonic extends Component {
@@ -26,9 +26,9 @@ class ModalMnemonic extends Component {
     this._onValue = this._onValue.bind(this);
   }
 
-  async componentWillReceiveProps({ visible, wallet: { address, coin } }) {
+  async componentWillReceiveProps({ visible, device: { address } }) {
     if (!visible) return;
-    const hexSeed = address && await SecureStore.getItemAsync(`${coin}_${address}`);
+    const hexSeed = address && await SecureStore.getItemAsync(address);
 
     this.setState({
       words: (hexSeed) ? MnemonicService.backup(hexSeed) : Array(WORDS_LENGTH).fill(''),
@@ -47,8 +47,8 @@ class ModalMnemonic extends Component {
   }
 
   _onBackup() {
-    const { props: { onClose, updateWallet, wallet } } = this;
-    updateWallet({ ...wallet, backup: true });
+    const { props: { onClose, updateDevice } } = this;
+    updateDevice({ seedBackup: true });
     onClose();
   }
 
@@ -56,7 +56,7 @@ class ModalMnemonic extends Component {
     const {
       _onBackup, _onRecover, _onValue,
       props: {
-        i18n, onClose, visible, wallet: { address },
+        i18n, onClose, visible, device: { address },
       },
       state: { words = [] },
     } = this;
@@ -99,16 +99,16 @@ ModalMnemonic.propTypes = {
   onClose: func,
   onRecover: func,
   visible: bool,
-  updateWallet: func,
-  wallet: shape(WALLET),
+  updateDevice: func,
+  device: shape(DEVICE),
 };
 
 ModalMnemonic.defaultProps = {
   onClose() {},
   onRecover() {},
-  updateWallet() {},
+  updateDevice() {},
   visible: false,
-  wallet: {},
+  device: {},
 };
 
 const mapStateToProps = ({ i18n }) => ({
@@ -116,7 +116,7 @@ const mapStateToProps = ({ i18n }) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  updateWallet: wallet => dispatch(updateWalletAction(wallet)),
+  updateWallet: device => dispatch(updateDeviceAction(device)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ModalMnemonic);

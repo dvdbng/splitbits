@@ -14,16 +14,11 @@ export default {
   DEVICE: {
     id: string,
     currency: string,
-    devices: array,
-    image: string,
+    address: string,
     language: string,
     name: string,
-    push: string,
-    pin: string,
-    requests: array,
-    state: string,
+    balance: number,
     token: string,
-    trend: string,
     createdAt: date,
   },
   ERROR: {

@@ -5,6 +5,7 @@ import Header from './Header';
 import Icon from './Icon';
 import Input from './Input';
 import Modal from './Modal';
+import Motion from './Motion';
 import Logo from './Logo';
 import Option from './Option';
 import QRreader from './QRreader';
@@ -18,6 +19,7 @@ export {
   Icon,
   Input,
   Modal,
+  Motion,
   Logo,
   Option,
   QRreader,

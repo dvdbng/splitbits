@@ -14,18 +14,15 @@ const HeaderTitle = ({
 }) => {
   const { currency } = device;
   let totalBalance = 0;
-  let totalTrend = 0;
 
-  wallets.forEach(({ balance, coin, trend }) => {
+  wallets.forEach(({ balance, coin }) => {
     const total = balance / (currencies[coin] / SATOSHI);
     totalBalance += total;
-    totalTrend += total * (trend / 100);
   });
 
   return (
     <Header>
       <Amount coin={currency} value={totalBalance} style={styles.amount} />
-      <Amount coin={currency} value={totalTrend} style={styles.trend} symbol />
     </Header>
   );
 };

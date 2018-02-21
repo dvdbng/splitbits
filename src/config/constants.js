@@ -39,7 +39,7 @@ export default {
   },
 
   SERVICE: DEV
-    ? Constants.linkingUrl.replace(/^\w+:\/\/([^:/]+):\d+\/.*$/, 'http://$1:3000/')
+    ? Constants.linkingUrl.replace(/^\w+:\/\/([^:/]+):\d+\/.*$/, 'http://$1:4001/')
     : 'https://splitbits.sohobase.co/',
 
   SOHOBASE_SUPPORT: 'support@sohobase.co',

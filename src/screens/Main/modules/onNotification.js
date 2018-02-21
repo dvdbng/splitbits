@@ -1,6 +1,6 @@
-import { DeviceService, TransactionService, WalletService } from '../../../services';
+import { DeviceService, TransactionService } from '../../../services';
 import { instance } from '../../../store';
-import { updateDeviceAction, updateTransactionsAction, updateWalletAction } from '../../../store/actions';
+import { updateDeviceAction, updateTransactionsAction } from '../../../store/actions';
 
 export default async({ data = {} }) => {
   const { device, wallet } = data;
@@ -9,9 +9,7 @@ export default async({ data = {} }) => {
   if (device) await DeviceService.state().then(value => value && dispatch(updateDeviceAction(value)));
 
   if (wallet) {
-    await Promise.all([
-      WalletService.state({ id: wallet }).then(value => value && dispatch(updateWalletAction(value))),
-      TransactionService.list({ walletId: wallet }).then(value => value && dispatch(updateTransactionsAction(value))),
-    ]);
+    const transactions = await TransactionService.list({ walletId: wallet });
+    if (transactions) dispatch(updateTransactionsAction(transactions));
   }
 };

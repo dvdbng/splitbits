@@ -2,10 +2,9 @@ import { LinearGradient } from 'expo';
 import { bool, func, shape, string } from 'prop-types';
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
-import { View as Motion } from 'react-native-animatable';
 import { connect } from 'react-redux';
 
-import { Amount, Header, Input } from '../../../components';
+import { Amount, Header, Input, Motion } from '../../../components';
 import { C, SHAPE, STYLE, THEME } from '../../../config';
 import styles from './AmountTransaction.style';
 

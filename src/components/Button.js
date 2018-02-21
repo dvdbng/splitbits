@@ -1,7 +1,7 @@
 import { array, bool, func, node, number, object, oneOfType, shape, string } from 'prop-types';
 import React from 'react';
 import { StyleSheet, Text } from 'react-native';
-import { View as Motion } from 'react-native-animatable';
+import Motion from './Motion';
 import { connect } from 'react-redux';
 
 import Icon from './Icon';

@@ -1,10 +1,9 @@
 import { arrayOf, func, shape } from 'prop-types';
 import React, { Component } from 'react';
 import { Image, Text, View } from 'react-native';
-import { View as Motion } from 'react-native-animatable';
 import { connect } from 'react-redux';
 
-import { Button, Header } from '../../components';
+import { Button, Header, Motion } from '../../components';
 import { ModalCamera, ModalValues } from '../../containers';
 import { ASSETS, C, SHAPE, STYLE, THEME } from '../../config';
 import { DeviceService, WalletService } from '../../services';
@@ -69,16 +68,13 @@ class Settings extends Component {
   async _onModalValue(value) {
     const {
       params = {},
-      props: { updateDevice, updateWallet, wallets },
+      props: { updateDevice },
       state: { context },
     } = this;
     params[context] = value;
 
     this.setState({ modal: false, ...params });
     await DeviceService.update(params).then(updateDevice);
-    WalletService
-      .state({ ids: wallets.map(({ id }) => id) })
-      .then((values = []) => values.forEach(wallet => updateWallet(wallet)));
   }
 
   render() {
@@ -150,14 +146,10 @@ Settings.propTypes = {
   i18n: shape(SHAPE.I18N).isRequired,
   navigation: shape(SHAPE.NAVIGATION).isRequired,
   updateDevice: func,
-  updateWallet: func,
-  wallets: arrayOf(shape(SHAPE.WALLET)),
 };
 
 Settings.defaultProps = {
   updateDevice() {},
-  updateWallet() {},
-  wallets: [],
 };
 
 const mapStateToProps = ({ device, i18n, wallets }) => ({
@@ -168,7 +160,6 @@ const mapStateToProps = ({ device, i18n, wallets }) => ({
 
 const mapDispatchToProps = dispatch => ({
   updateDevice: device => device && dispatch(updateDeviceAction(device)),
-  updateWallet: wallet => wallet && dispatch(updateWalletAction(wallet)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Settings);

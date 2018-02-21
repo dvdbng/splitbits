@@ -26,10 +26,7 @@ class Main extends Component {
     };
     this._onMnemonic = this._onMnemonic.bind(this);
     this._onModal = this._onModal.bind(this);
-    this._onModalWallet = this._onModalWallet.bind(this);
     this._onNewTransaction = this._onNewTransaction.bind(this);
-    this._onRecover = this._onRecover.bind(this);
-    this._onSwipe = this._onSwipe.bind(this);
     this._onWallet = this._onWallet.bind(this);
   }
 
@@ -60,17 +57,13 @@ class Main extends Component {
     this.setState({ showMnemonic: !this.state.showMnemonic });
   }
 
-  _onSwipe(walletIndex) {
-    this.setState({ walletIndex });
-  }
-
   _onWallet() {
     this.setState({ showWallet: !this.state.showWallet });
   }
 
   render() {
     const {
-      _onNewTransaction, _onMnemonic, _onModal, _onModalWallet, _onRecover, _onSwipe, _onWallet,
+      _onNewTransaction, _onMnemonic, _onModal, _onWallet,
       props: { i18n, navigation: { navigate }, wallets },
       state: {
         connection, showMnemonic, showTransaction, showWalletNew, showWallet, walletIndex,
@@ -78,22 +71,21 @@ class Main extends Component {
     } = this;
     const wallet = wallets[walletIndex];
     const focus = !showTransaction && !showWallet && !showWalletNew;
-    const isOffline = connection === undefined;
 
 
     return (
       <View style={STYLE.SCREEN}>
         <LinearGradient colors={COLOR.GRADIENT} style={STYLE.LAYOUT_TOP} >
           <Header />
-          <Wallets index={walletIndex} onNew={_onModalWallet} onOptions={_onWallet} onSwipe={_onSwipe} />
+          <Wallets index={walletIndex} onOptions={_onWallet} />
         </LinearGradient>
         <Transactions navigate={navigate} wallet={wallet} />
         <Footer navigate={navigate} elevation={focus} />
-        <TransactionButton onPress={_onModal} visible={focus && wallet !== undefined && !isOffline} />
+        <TransactionButton onPress={_onModal} visible={true} />
         <ModalTransaction visible={showTransaction} onClose={_onModal} onPress={_onNewTransaction} wallet={wallet} />
         { wallet &&
           <ModalWallet visible={showWallet && !showMnemonic} wallet={wallet} onBackup={_onMnemonic} onClose={_onWallet} /> }
-        <ModalMnemonic visible={showMnemonic} onClose={_onMnemonic} onRecover={_onRecover} wallet={wallet} />
+        <ModalMnemonic visible={showMnemonic} onClose={_onMnemonic} wallet={wallet} />
       </View>
     );
   }
