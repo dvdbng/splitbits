@@ -12,7 +12,7 @@ const signatureMessage = `This is pico app on behalf of a user. We want to log i
 export default {
   async create() {
     const seed = await EntropyService();
-    const { address, secret } = nanoJS.address.fromSeed(seed, 0);
+    const { address, secret } = nanoJS.address.fromSeed(nanoJS.encoding.hexDecode(seed), 0);
     await SecureStore.set(address, seed);
     const signature = nanoJS.message.sign(signatureMessage, secret).toString('base64');
 
@@ -30,26 +30,23 @@ export default {
     return resp;
   },
 
-  async update({
-    currency, image, language, name, trend,
-  }) {
-    const body = new FormData(); // eslint-disable-line
+  async update(props) {
+    //const body = new FormData(); // eslint-disable-line
+    //if (image) {
+    //  const uri = image.uri.split('.');
+    //  const fileType = uri[uri.length - 1];
+    //  body.append('image', {
+    //    uri: image.uri,
+    //    name: `photo.${fileType}`,
+    //    type: `image/${fileType}`,
+    //  });
+    //}
+    //if (currency) body.append('currency', currency);
+    //if (language) body.append('language', language);
+    //if (name) body.append('name', name);
+    //if (trend) body.append('trend', trend);
 
-    if (image) {
-      const uri = image.uri.split('.');
-      const fileType = uri[uri.length - 1];
-      body.append('image', {
-        uri: image.uri,
-        name: `photo.${fileType}`,
-        type: `image/${fileType}`,
-      });
-    }
-    if (currency) body.append('currency', currency);
-    if (language) body.append('language', language);
-    if (name) body.append('name', name);
-    if (trend) body.append('trend', trend);
-
-    return service('device', { method: 'PUT', body }, true);
+    return service('user', props, 'PUT');
   },
 
   search(query) {

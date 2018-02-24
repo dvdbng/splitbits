@@ -19,9 +19,13 @@ export default StyleSheet.create({
 
   form: {
     zIndex: 1,
-    minHeight: '65%',
-    height: '65%',
+    flex: 1,
+
     backgroundColor: COLOR.WHITE,
+  },
+
+  backup: {
+    margin: 20,
   },
 
   thumb: {

@@ -4,7 +4,7 @@ import { Image, Text, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { Button, Header, Motion } from '../../components';
-import { ModalCamera, ModalValues } from '../../containers';
+import { ModalCamera, ModalValues, ModalMnemonic } from '../../containers';
 import { ASSETS, C, SHAPE, STYLE, THEME } from '../../config';
 import { DeviceService, WalletService } from '../../services';
 import { updateDeviceAction, updateWalletAction } from '../../store/actions';
@@ -27,6 +27,7 @@ class Settings extends Component {
       camera: false,
       context: undefined,
       currency,
+      showMnemonic: false,
       language,
       modal: false,
       name,
@@ -37,6 +38,7 @@ class Settings extends Component {
     this._onModalImage = this._onModalImage.bind(this);
     this._onModalValue = this._onModalValue.bind(this);
     this._onName = this._onName.bind(this);
+    this._onBackup = this._onBackup.bind(this);
   }
 
   async _onImage(image) {
@@ -52,6 +54,10 @@ class Settings extends Component {
     timeout = setTimeout(() => {
       DeviceService.update({ name }).then(updateDevice);
     }, 1000);
+  }
+
+  _onBackup() {
+    this.setState({ showMnemonic: !this.state.showMnemonic });
   }
 
   _onModal(context) {
@@ -79,11 +85,12 @@ class Settings extends Component {
 
   render() {
     const {
-      _onModalValue, _onImage, _onName, _onModal, _onModalImage,
+      _onModalValue, _onImage, _onName, _onModal, _onModalImage, _onBackup,
     } = this;
     const { device, i18n, navigation } = this.props;
+    const { seedBackup } = device;
     const {
-      camera, context, image, modal, name, timestamp,
+      camera, context, image, modal, name, timestamp, showMnemonic,
       currency = device.currency,
       language = device.language,
       trend = device.trend || 'daily',
@@ -115,17 +122,9 @@ class Settings extends Component {
             </View>
             <Fieldset input label={i18n.NAME} value={name} onChange={_onName} />
             <Fieldset label={i18n.LOCAL_CURRENCY} value={currency} onChange={() => _onModal('currency')} />
-            <Fieldset label={i18n.TREND} value={i18n.TRENDS[trend]} onChange={() => _onModal('trend')} />
             <Fieldset label={i18n.LANGUAGE} value={LANGUAGES[language]} onChange={() => _onModal('language')} />
             <Text style={styles.text}>{i18n.HINT_FIND_BY_NAME}</Text>
-          </View>
-        </Motion>
-        <Motion animation="bounceInUp" delay={500} style={[STYLE.CENTERED, styles.footer]}>
-          <Image source={ASSETS.sohobase} style={styles.sohobase} />
-          <View>
-            <Text style={styles.text}>❤️</Text>
-            <Text style={styles.text}>{i18n.COPYRIGHT}</Text>
-            <Text style={[styles.text, styles.version]}>{`Version ${PKG.version}`}</Text>
+            { !seedBackup && <Button onPress={_onBackup} caption={i18n.CREATE_BACKUP} style={styles.backup} /> }
           </View>
         </Motion>
         <ModalCamera visible={camera} onClose={_onModalImage} onFile={_onImage} />
@@ -136,6 +135,7 @@ class Settings extends Component {
           onClose={_onModal}
           onValue={_onModalValue}
         />
+        <ModalMnemonic visible={showMnemonic} onClose={_onBackup} />
       </View>
     );
   }

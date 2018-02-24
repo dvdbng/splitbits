@@ -44,6 +44,7 @@
   },
   "dependencies": {
     "assert": "1.4.1",
+    "big-integer": "^1.6.26",
     "bigi": "1.4.2",
     "bip39": "2.5.0",
     "blakejs": "^1.1.0",
@@ -52,6 +53,7 @@
     "color": "2.0.1",
     "events": "1.1.1",
     "expo": "24.0.2",
+    "lodash": "^4.17.5",
     "more-entropy": "0.0.7",
     "nano-lib": "^0.2.1",
     "prop-types": "15.6.0",

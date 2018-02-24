@@ -26,7 +26,6 @@ class Transaction extends Component {
       camera: false,
       concept: undefined,
       connection: undefined,
-      fees: {},
       processing: false,
     };
     this._onAddress = this._onAddress.bind(this);
@@ -35,13 +34,11 @@ class Transaction extends Component {
     this._onCancel = this._onCancel.bind(this);
     this._onConcept = this._onConcept.bind(this);
     this._onSubmit = this._onSubmit.bind(this);
-    this._updateFees = this._updateFees.bind(this);
   }
 
   async componentWillMount() {
-    const { _updateFees, props: { updateRecipient, item: { amount, state, to } = {}, wallet } } = this;
+    const { props: { updateRecipient, item: { amount, state, to } = {}, wallet } } = this;
     updateRecipient();
-    if (state === REQUESTED && wallet.address !== to.address) _updateFees(amount);
     this.setState({ connection: await ConnectionService.get() });
   }
 
@@ -51,13 +48,9 @@ class Transaction extends Component {
   }
 
   _onAmount(amount) {
-    const { _updateFees, props: { type } } = this;
-    this.setState({ amount, fees: {} });
+    const { props: { type } } = this;
+    this.setState({ amount });
     clearTimeout(timeout);
-
-    if (type === SEND && amount > 0) {
-      timeout = setTimeout(() => _updateFees(Math.round(amount / SATOSHI)), 300);
-    }
   }
 
   _onCamera() {
@@ -66,11 +59,6 @@ class Transaction extends Component {
 
   _onConcept(concept) {
     this.setState({ concept });
-  }
-
-  async _updateFees(amount) {
-    const { wallet: { balance, id } } = this.props;
-    if (balance > 0) this.setState({ fees: await TransactionService.fees(id, amount) });
   }
 
   async _onSubmit() {
@@ -103,12 +91,11 @@ class Transaction extends Component {
         currencies, device: { currency }, i18n, item, navigation, type, wallet,
       },
       state: {
-        amount = 0, camera, concept, fees = {}, processing,
+        amount = 0, camera, concept, processing,
       },
     } = this;
     const { coin } = wallet;
     const editable = !item;
-    const fee = fees.total;
     const amountProps = {
       coin, editable, item, navigation, wallet,
     };
@@ -134,15 +121,6 @@ class Transaction extends Component {
                 wallet={wallet}
               /> }
           </View>
-          { fee > 0 &&
-            <Motion animation="bounceIn" style={styles.centered}>
-              <Amount
-                caption={`${i18n.FEE} `}
-                coin={currency}
-                value={(fee * SATOSHI) / currencies[currency][coin]}
-                style={styles.caption}
-              />
-            </Motion> }
         </View>
         <QRreader active={camera} onClose={_onCamera} onRead={_onAddress} />
       </View>

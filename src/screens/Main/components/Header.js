@@ -1,46 +1,40 @@
-import { arrayOf, shape } from 'prop-types';
+import { arrayOf, shape, number } from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
 import { Amount, Header } from '../../../components';
+import { units } from '../../../services';
 import { C, SHAPE } from '../../../config';
 import styles from './Header.style';
 
-const { SATOSHI } = C;
 const { CURRENCIES, DEVICE, WALLET } = SHAPE;
 
 const HeaderTitle = ({
-  currencies, device, wallets,
+  rate, device,
 }) => {
+  const totalBalance = units.rawToNano(device.balance);
   const { currency } = device;
-  let totalBalance = 0;
-
-  wallets.forEach(({ balance, coin }) => {
-    const total = balance / (currencies[coin] / SATOSHI);
-    totalBalance += total;
-  });
 
   return (
     <Header>
-      <Amount coin={currency} value={totalBalance} style={styles.amount} />
+      <Amount coin={currency} value={totalBalance * rate} style={styles.amountFiat} />
+      <Amount coin="Nano" value={totalBalance} style={styles.amount} />
     </Header>
   );
 };
 
 HeaderTitle.propTypes = {
-  currencies: shape(CURRENCIES),
+  rate: number,
   device: shape(DEVICE),
-  wallets: arrayOf(shape(WALLET)),
 };
 
 HeaderTitle.defaultProps = {
-  currencies: {},
+  rate: 0,
   device: undefined,
-  wallets: [],
 };
 
 const mapStateToProps = ({ currencies, device, wallets }) => ({
-  currencies: currencies[device.currency],
+  rate: currencies[device.currency],
   device,
   wallets,
 });

@@ -111,6 +111,7 @@ Friends.defaultProps = {
 const mapStateToProps = ({ device: { friends = [] }, i18n }, props) => {
   const { selectMode = false } = props.navigation.state.params || {};
 
+  console.log(friends);
   return { devices: friends, i18n, selectMode };
 };
 

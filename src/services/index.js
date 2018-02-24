@@ -7,6 +7,7 @@ import MnemonicService from './mnemonic';
 import PushService from './push';
 import TransactionService from './transaction';
 import WalletService from './wallet';
+import units from './units';
 
 export {
   CurrenciesService,
@@ -18,4 +19,5 @@ export {
   PushService,
   TransactionService,
   WalletService,
+  units,
 };

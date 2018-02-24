@@ -5,6 +5,7 @@ import { Text, View } from 'react-native';
 import { Input } from '../../../components';
 import { STYLE } from '../../../config';
 import styles from './Fieldset.style';
+import settingsStyles from '../Settings.style';
 
 const Fieldset = ({
   input, label, value, onChange,
@@ -20,6 +21,7 @@ const Fieldset = ({
 Fieldset.propTypes = {
   input: bool,
   label: string,
+  hint: string,
   value: string,
   onChange: func,
 };

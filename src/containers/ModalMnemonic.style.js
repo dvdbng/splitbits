@@ -18,7 +18,7 @@ export default StyleSheet.create({
   },
 
   word: {
-    textAlign: 'center',
+    textAlign: 'left',
     width: '27.5%',
   },
 

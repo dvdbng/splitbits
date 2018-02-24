@@ -22,7 +22,7 @@ export default {
     CONFIRMATIONS: 'Confirmations',
     COPYRIGHT: 'Made by a small band of superheroes in London. Thank you for your support!',
     CREATE: 'create',
-    CREATE_BACKUP: 'Create a backup',
+    CREATE_BACKUP: 'Backup your wallet',
     CREATE_FIRST_WALLET: 'Create your wallet',
 
     DATE: 'Date',
@@ -52,7 +52,8 @@ export default {
 
     PAPER_KEY: 'Paper key',
     PAPER_KEY_DONE: 'Already written my paper key',
-    PAPER_WALLET: 'Your paper key is the only way to restore your wallet if your phone is lost, stolen, broken, or upgraded. This is your list of words to write down on a piece of paper and keep safe.',
+    PAPER_WALLET: "Your paper key is the only way to restore your wallet if your phone is lost, stolen, broken, or upgraded. This is your list of words to write down on a piece of paper and keep safe. For security, once the backup is done you won't be able to access the seed again. Please ensure that you have written it correctly.",
+    CONFIRM_PAPER_WALLET: 'Please write the words in positions 5th and 9th to confirm the backup.',
     PAY: 'Pay',
     PAYMENT: 'Payment',
     PAYMENT_REQUEST: 'Payment requests',

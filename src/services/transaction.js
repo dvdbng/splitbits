@@ -4,8 +4,9 @@ import { SecureStore } from '../store';
 import { service } from './modules';
 
 export default {
-  list({ walletId, lastBlock = 0 }) {
-    return service(`transaction/list?walletId=${walletId}&lastBlock=${lastBlock}`);
+  list() {
+    // TODO: Receive pending here
+    return service('blocks/list');
   },
 
   request(props) {

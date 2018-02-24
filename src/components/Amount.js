@@ -9,9 +9,9 @@ const {
   CONVERSION, FIAT, SATOSHI, SYMBOL,
 } = C;
 
-const renderSymbol = ({ coin, style }, SYMBOLS = SYMBOL) => ( // eslint-disable-line
+const renderSymbol = ({ coin, style }) => ( // eslint-disable-line
   <Text style={[styles.amount, style, styles.symbol]}>
-    {Object.keys(SYMBOLS).includes(coin) ? SYMBOLS[coin] : SYMBOL[coin.toUpperCase()] || coin.toUpperCase()}
+    {Object.keys(SYMBOL).includes(coin) ? SYMBOL[coin] : SYMBOL[coin.toUpperCase()] || coin.toUpperCase()}
   </Text>
 );
 
@@ -19,37 +19,23 @@ const Amount = (props) => {
   const {
     caption, coin, style, symbol,
   } = props;
-  let { value } = props;
-  let fixed = 0;
-  let symbols;
-
-  if (Object.values(FIAT).includes(coin)) {
-    fixed = 2;
-  } else {
-    const satoshis = value * SATOSHI;
-    if (satoshis > 0 && satoshis < 0.1) {
-      value = parseInt(satoshis / CONVERSION[coin], 10);
-      symbols = SYMBOL.FRIENDLY;
-    } else {
-      value = Math.round(satoshis * 10000) / 10000;
-      fixed = (value.toString().split('.')[1] || []).length;
-    }
-  }
+  const value = props.value || 0;
+  const decimals = Object.values(FIAT).includes(coin) ? 2 : 4;
 
   return (
     <View style={STYLE.ROW}>
       { caption && <Text style={[styles.amount, style]}>{caption.replace(/\b\w/g, l => l.toUpperCase())}</Text> }
       { value < 0 && <Text style={[styles.amount, style]}>-</Text> }
       { symbol && value > 0 && <Text style={[styles.amount, style]}>+</Text> }
-      { coin === FIAT.USD && renderSymbol(props, symbols) }
+      { coin === FIAT.USD && renderSymbol(props) }
       <Text style={[styles.amount, style]}>
         {
           parseFloat(Math.abs(value))
-            .toFixed(fixed)
+            .toFixed(decimals)
             .replace(/(\d)(?=(\d{3})+\.)/g, '$1,')
         }
       </Text>
-      { coin !== FIAT.USD && renderSymbol(props, symbols) }
+      { coin !== FIAT.USD && renderSymbol(props) }
     </View>
   );
 };

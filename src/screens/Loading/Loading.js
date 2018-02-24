@@ -1,6 +1,7 @@
 import { Font } from 'expo';
 import { func } from 'prop-types';
 import React, { Component } from 'react';
+import _ from 'lodash';
 import { StatusBar, StyleSheet, View } from 'react-native';
 
 import { updateCurrenciesAction, updateDeviceAction, errorAction } from '../../store/actions';
@@ -26,14 +27,14 @@ class Loading extends Component {
     const store = await initialize();
     const { dispatch } = store;
     const { device: { accessToken } = {} } = store.getState();
-
     dispatch(errorAction());
+
     if (accessToken) {
       service.token = accessToken;
-      //await Promise.all([
-      //  CurrenciesService.list().then(value => value && dispatch(updateCurrenciesAction(value))),
-      //  DeviceService.state().then(value => value && dispatch(updateDeviceAction(value))),
-      //]);
+      await Promise.all([
+        CurrenciesService.list().then(value => value && dispatch(updateCurrenciesAction(value))),
+        DeviceService.state().then(value => value && dispatch(updateDeviceAction(value))),
+      ]);
     }
 
     await fontLoad;

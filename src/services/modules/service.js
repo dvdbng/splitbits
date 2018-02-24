@@ -20,7 +20,7 @@ const callService = async(endpoint, body, method) => {
   };
   const url = `${C.SERVICE}${endpoint}`;
   body = ((typeof body) === 'object' && !(body instanceof FormData)) ? JSON.stringify(body) : body;
-  method = method || body ? 'POST' : 'GET';
+  method = method || (body ? 'POST' : 'GET');
 
   dispatch(errorAction());
   if (DEV) console.log(`[${method}] ${url}`);

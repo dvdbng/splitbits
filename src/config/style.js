@@ -4,7 +4,7 @@ import THEME from './theme';
 
 const { DEV } = C;
 const {
-  COLOR, FONT, HEADER_SIZE, LAYOUT, UNIT, OFFSET, ROW_MIN_HEIGHT,
+  COLOR, FONT, HEADER_SIZE, UNIT, OFFSET, ROW_MIN_HEIGHT,
 } = THEME;
 
 export default StyleSheet.create({
@@ -52,7 +52,7 @@ export default StyleSheet.create({
 
   LAYOUT_TOP: {
     flex: 0,
-    height: LAYOUT.WALLET_HEIGHT + HEADER_SIZE + (OFFSET * 2.5),
+    height: HEADER_SIZE + (OFFSET * 2.5),
     backgroundColor: DEV ? COLOR.BACKGROUND_DISABLED : COLOR.PRIMARY,
   },
 
@@ -80,6 +80,10 @@ export default StyleSheet.create({
   },
 
   SCREEN: {
+    flex: 1,
+  },
+
+  FLEX: {
     flex: 1,
   },
 

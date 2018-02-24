@@ -7,18 +7,11 @@ import { SHAPE } from '../config';
 import DeviceItem from './DeviceItem';
 import styles from './DevicesList.style';
 
-const consolidate = (a = [], b = []) => {
-  const dataSource = [];
-  Array.prototype.push.apply(dataSource, a);
-  Array.prototype.push.apply(dataSource, b);
-  return dataSource;
-};
-
 const DevicesList = ({
-  data, device: { devices, requests }, onItem, onRefresh, refreshing, request, selected, style,
+  data, device: { friends }, onItem, onRefresh, refreshing, request, selected, style,
 }) => (
   <FlatList
-    data={data || consolidate(requests, devices)}
+    data={data || friends}
     keyExtractor={item => item.id}
     refreshControl={<RefreshControl onRefresh={onRefresh} refreshing={refreshing} />}
     renderItem={({ item }) => (

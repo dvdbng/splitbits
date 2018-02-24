@@ -7,9 +7,8 @@ export default {
     onPress: func,
   },
   CURRENCIES: {
-    BTC: number,
-    LTC: number,
-    ETH: number,
+    USD: number,
+    EUR: number,
   },
   DEVICE: {
     id: string,
@@ -17,9 +16,11 @@ export default {
     address: string,
     language: string,
     name: string,
-    balance: number,
+    balance: string,
+    pending: string,
     token: string,
     createdAt: date,
+    seedBackup: bool,
   },
   ERROR: {
     code: number,

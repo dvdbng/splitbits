@@ -1,18 +1,15 @@
 import { arrayOf, func, shape } from 'prop-types';
 import React, { Component } from 'react';
-import { FlatList, RefreshControl, View } from 'react-native';
+import { FlatList, RefreshControl, View, Text } from 'react-native';
 import { connect } from 'react-redux';
 
 import { SHAPE, STYLE, THEME } from '../../../config';
 import { TransactionService } from '../../../services';
 import { updateTransactionsAction } from '../../../store/actions';
-import { walletTransactions } from '../modules';
 import TransactionItem from './TransactionItem';
 import styles from './Transactions.style';
 
 const { TRANSACTION, DEVICE } = SHAPE;
-const { ANIMATION: { DURATION } } = THEME;
-let timeout;
 
 class Transactions extends Component {
   constructor(props) {
@@ -27,11 +24,10 @@ class Transactions extends Component {
   }
 
   async _onRefresh() {
-    const { props: { device, updateTransactions } } = this;
+    const { props: { updateTransactions } } = this;
 
-    timeout = setTimeout(() => this.setState({ refreshing: true }), DURATION / 2);
-    await TransactionService.list({ deviceId: device.id }).then(updateTransactions);
-    clearTimeout(timeout);
+    this.setState({ refreshing: true });
+    updateTransactions(await TransactionService.list());
     this.setState({ refreshing: false });
   }
 
@@ -49,13 +45,18 @@ class Transactions extends Component {
 
     return (
       <View style={[STYLE.LAYOUT_BOTTOM, styles.container]}>
-        <FlatList
-          data={transactions}
-          keyExtractor={item => item.id}
-          refreshControl={<RefreshControl onRefresh={_onRefresh} refreshing={refreshing} />}
-          renderItem={_renderTransaction}
-          style={styles.list}
-        />
+        { transactions.length &&
+          <FlatList
+            data={transactions}
+            keyExtractor={item => item.id}
+            refreshControl={<RefreshControl onRefresh={_onRefresh} refreshing={refreshing} />}
+            renderItem={_renderTransaction}
+            style={styles.list}
+          />
+        }
+        { transactions.length === 0 &&
+          <Text>No transactions!</Text>
+        }
       </View>
     );
   }
@@ -75,8 +76,8 @@ Transactions.defaultProps = {
   device: {},
 };
 
-const mapStateToProps = ({ device, transactions }, { wallet }) => ({
-  transactions: walletTransactions(device, wallet, transactions),
+const mapStateToProps = ({ transactions, device }) => ({
+  transactions, device,
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -18,12 +18,14 @@ class ModalMnemonic extends Component {
     super(props);
 
     this.state = {
-      words: Array(WORDS_LENGTH).fill(undefined),
+      word5: '',
+      word9: '',
+      confirm: false,
     };
 
     this._onBackup = this._onBackup.bind(this);
     this._onRecover = this._onRecover.bind(this);
-    this._onValue = this._onValue.bind(this);
+    this._onConfirm = this._onConfirm.bind(this);
   }
 
   async componentWillReceiveProps({ visible, device: { address } }) {
@@ -31,19 +33,14 @@ class ModalMnemonic extends Component {
     const hexSeed = address && await SecureStore.getItemAsync(address);
 
     this.setState({
-      words: (hexSeed) ? MnemonicService.backup(hexSeed) : Array(WORDS_LENGTH).fill(''),
+      word5: '',
+      word9: '',
+      confirm: false,
+      words: MnemonicService.backup(hexSeed),
     });
   }
 
-  _onValue(position, value) {
-    const { words = [] } = this.state;
-    words[position] = value.toLowerCase();
-    this.setState({ words });
-  }
-
   _onRecover() {
-    const { props: { onRecover }, state: { words } } = this;
-    onRecover(MnemonicService.restore(words));
   }
 
   _onBackup() {
@@ -52,41 +49,53 @@ class ModalMnemonic extends Component {
     onClose();
   }
 
+  _onConfirm() {
+    this.setState({ confirm: true });
+  }
+
   render() {
     const {
-      _onBackup, _onRecover, _onValue,
+      _onBackup, _onRecover, _onValue, _onConfirm,
       props: {
-        i18n, onClose, visible, device: { address },
+        i18n, onClose, visible, device: { address, hexSeed },
       },
-      state: { words = [] },
+      state: { words = [], word5, word9, confirm },
     } = this;
-    const readOnly = !!address;
+    const readOnly = true;
 
     return (
       <Modal
-        hint={readOnly ? i18n.PAPER_WALLET : i18n.RECOVER_PAPER_WALLET}
+        hint={confirm ? i18n.CONFIRM_PAPER_WALLET : i18n.PAPER_WALLET}
         onClose={onClose}
         style={STYLE.CENTERED}
         title={i18n.PAPER_KEY}
         visible={visible}
       >
-        <View style={[STYLE.ROW, styles.words]}>
-          { words.map((value, i) => (
-            <Input
-              editable={!readOnly}
-              key={i.toString()}
-              onChangeText={text => _onValue(i, text)}
-              placeholder={`${i18n.WORD} ${i + 1}`}
-              style={[styles.word, (!readOnly && styles.input)]}
-              value={value}
-            />)) }
-        </View>
+        { !confirm &&
+          <View style={[STYLE.ROW, styles.words]}>
+            { words.map((value, i) => (
+              <Input
+                editable={!readOnly}
+                key={i.toString()}
+                onChangeText={text => _onValue(i, text)}
+                placeholder={`${i18n.WORD} ${i + 1}`}
+                style={[styles.word, (!readOnly && styles.input)]}
+                value={`${i+1}: ${value}`}
+              />)) }
+          </View>
+        }
+        { confirm && 
+          <View style={[STYLE.ROW, styles.words]}>
+            <Input onChangeText={text => this.setState({ word5: text})} placeholder="5th Word" style={[styles.word, styles.input]} />
+            <Input onChangeText={text => this.setState({ word9: text})} placeholder="9th Word" style={[styles.word, styles.input]} />
+          </View>
+        }
 
         <Button
           accent
-          caption={readOnly ? i18n.PAPER_KEY_DONE : i18n.NEXT}
-          disabled={!readOnly && !MnemonicService.validate(words)}
-          onPress={readOnly ? _onBackup : _onRecover}
+          caption={confirm ? i18n.PAPER_KEY_DONE : i18n.NEXT}
+          disabled={confirm && (word5 !== words[4] || word9 !== words[8])}
+          onPress={confirm ? _onBackup : _onConfirm}
           style={styles.button}
         />
       </Modal>
@@ -111,12 +120,10 @@ ModalMnemonic.defaultProps = {
   device: {},
 };
 
-const mapStateToProps = ({ i18n }) => ({
-  i18n,
-});
+const mapStateToProps = ({ i18n, device }) => ({ i18n, device });
 
 const mapDispatchToProps = dispatch => ({
-  updateWallet: device => dispatch(updateDeviceAction(device)),
+  updateDevice: device => dispatch(updateDeviceAction(device)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ModalMnemonic);

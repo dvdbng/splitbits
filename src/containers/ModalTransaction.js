@@ -1,41 +1,43 @@
 import { bool, func, shape } from 'prop-types';
 import React from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
+import QRCode from 'react-native-qrcode';
+
 import { connect } from 'react-redux';
 
 import { Modal, Option } from '../components';
-import { C, SHAPE, STYLE } from '../config';
+import { C, SHAPE, STYLE, THEME } from '../config';
+import styles from './ModalTransaction.style';
 
-const { TYPE: { REQUEST, SEND } } = C;
+const { QR_SIZE } = THEME;
+const { TYPE: { SEND } } = C;
 
 const ModalTransaction = ({
-  device: { devices = [] }, i18n, onClose, onPress, visible, wallet: { balance, readOnly },
-}) => {
-  let hint = i18n.SEND_MONEY_HINT;
-  if (readOnly) hint = i18n.SEND_MONEY_HINT_READ_ONLY;
-  else if (balance === 0) hint = i18n.SEND_MONEY_HINT_NO_BALANCE;
-
-  return (
-    <Modal title={i18n.TYPE_OF_TRANSACTION} visible={visible} onClose={onClose}>
-      <View style={[STYLE.COL]}>
-        <Option
-          caption={i18n.SEND_MONEY}
-          disabled={readOnly || balance === 0}
-          hint={hint}
-          icon="arrowForward"
-          onPress={() => onPress(SEND)}
-        />
-        <Option
-          caption={i18n.REQUEST_MONEY}
-          disabled={devices.length === 0}
-          hint={devices.length === 0 ? i18n.REQUEST_MONEY_HINT_NO_FRIENDS : i18n.REQUEST_MONEY_HINT}
-          icon="arrowBack"
-          onPress={() => onPress(REQUEST)}
-        />
+  device: { address, balance }, i18n, onClose, onPress, visible,
+}) => (
+  <Modal title={i18n.TYPE_OF_TRANSACTION} visible={visible} onClose={onClose}>
+    <View style={[STYLE.COL]}>
+      <View style={[STYLE.LIST_ITEM, STYLE.CENTERED, styles.content]}>
+        <QRCode value={address} size={QR_SIZE} />
+        <Text style={styles.address}>{address}</Text>
       </View>
-    </Modal>
-  );
-};
+      <Option
+        caption={i18n.SEND_MONEY}
+        disabled={balance === '0'}
+        hint={(balance === '0') ? i18n.SEND_MONEY_HINT_NO_BALANCE : i18n.SEND_MONEY_HINT}
+        icon="arrowForward"
+        onPress={() => onPress(SEND)}
+      />
+    </View>
+  </Modal>
+);
+//  <Option
+//    caption={i18n.REQUEST_MONEY}
+//    disabled={friends.length === 0}
+//    hint={friends.length === 0 ? i18n.REQUEST_MONEY_HINT_NO_FRIENDS : i18n.REQUEST_MONEY_HINT}
+//    icon="arrowBack"
+//    onPress={() => onPress(REQUEST)}
+//  />
 
 ModalTransaction.propTypes = {
   device: shape(SHAPE.DEVICE).isRequired,
@@ -43,14 +45,12 @@ ModalTransaction.propTypes = {
   onClose: func,
   onPress: func,
   visible: bool,
-  wallet: shape(SHAPE.WALLET),
 };
 
 ModalTransaction.defaultProps = {
   onClose: undefined,
   onPress() {},
   visible: false,
-  wallet: {},
 };
 
 const mapStateToProps = ({ device, i18n }) => ({

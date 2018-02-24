@@ -38,13 +38,11 @@ class DeviceItem extends Component {
       _onRelation, _onRequest,
       props: {
         i18n, onPress, request, selected, style, data,
-        device: { friends },
       },
     } = this;
-    const {
-      id, image, name, requested,
-    } = data;
-    const isRequest = friends.find(item => item.id === id);
+    const { name, status } = data;
+    const isRequest = status === 0;
+    const requested = status === 1;
     let options;
 
     if (!request && !onPress) {
@@ -55,6 +53,8 @@ class DeviceItem extends Component {
           { ...BUTTON_CANCEL, text: i18n.CANCEL, onPress: () => _onRelation('hide') },
         ];
     }
+
+    const image = ''; // TODO
 
     return (
       <Swipeout right={options} autoClose backgroundColor={WHITE}>
@@ -83,7 +83,6 @@ class DeviceItem extends Component {
 
 DeviceItem.propTypes = {
   data: shape(SHAPE.DEVICE),
-  device: shape(SHAPE.DEVICE).isRequired,
   i18n: shape(SHAPE.I18N).isRequired,
   onPress: func,
   onRequest: func,
@@ -103,8 +102,7 @@ DeviceItem.defaultProps = {
   style: [],
 };
 
-const mapStateToProps = ({ device, i18n }) => ({
-  device,
+const mapStateToProps = ({ i18n }) => ({
   i18n,
 });
 
